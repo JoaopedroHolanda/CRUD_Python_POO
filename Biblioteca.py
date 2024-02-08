@@ -1,93 +1,52 @@
-class Livro:
-    def __init__(self,titulo,autor,ano_publicacao):
-        self.titulo = titulo
-        self.autor = autor
-        self.ano_publicacao = ano_publicacao
-
-class Usuario:
-    def __init__(self,nome,numero_identificacao):
-        self.nome =nome
-        self.numero_identificacao = numero_identificacao
-        self.livrosEmprestados = []
-
-    def alugarLivro(self,livro):
-        self.livrosEmprestados.append(livro)
-
-    def devolverLivro(self,livro):
-        self.livrosEmprestados.remove(livro)
-    
-    def verificarEmprestimos(self):
-        print(f" \n LIVROS DE {self.nome}:")
-        for livro in self.livrosEmprestados:
-            print(livro.titulo)
-
-
+import tkinter as tk
+from tkinter import messagebox
 class Biblioteca:
-    def __init__(self,nome):
+    def __init__(self, nome):
         self.nome = nome
-        self.listaLivros = []
+        self.catalogo = []
+        self.membros = []
 
-    def adicionarLivro(self,Livro):
-        self.listaLivros.append(Livro)
-        print(f"Livro {Livro.titulo} adicionado!")
+    def adicionar_livro(self, livro):
+        for l in self.catalogo:
+            if l.titulo == livro.titulo:
+                messagebox.showinfo("Aviso", f"Livro {livro.titulo} já está no catálogo!")
+                return
+            elif l.id == livro.id:
+                messagebox.showinfo("Aviso",f"O ID {livro.id} já tem um livro correspondente!")
+                return
+        messagebox.showinfo("Aviso",f'Livro {livro.titulo} adicionado ao catálogo!')
+        self.catalogo.append(livro)
 
-    def removerLivro(self,livro):
-        self.listaLivros.remove(livro)
-        print(f"Livro {Livro.titulo} removido!")
+    def adicionar_membro(self, membro):
+        for m in self.membros:
+            if m.nome == membro.nome:
+                messagebox.showinfo("Aviso",f"Membro {membro.nome} com número {membro.numero} já está cadastrado!")
+                return
+            elif m.numero == membro.numero:
+                messagebox.showinfo("Aviso",f"O número {membro.numero} já pussuí um membro correspondente!")
+                return
+        messagebox.showinfo("Aviso",f"Membro {membro.nome} cadastrado!")
+        self.membros.append(membro)
 
-    def alugarLivro(self, usuario, livro):
-        if livro in self.listaLivros:
-            usuario.alugarLivro(livro)
-            self.listaLivros.remove(livro)
-            print(f"Livro {livro.titulo} emprestado para {usuario.nome}")
+    def emprestar_livro(self, livro, membro):
+        if livro.status_emprestimo:
+            membro.alugar_livro(livro)
+            livro.emprestar_livro()
+            messagebox.showinfo("Aviso",f"livro {livro.titulo} emprestado para {membro.nome}")
         else:
-            print(f"O livro {livro.titulo} não está disponível para empréstimo.")
-
-    def devolverLivro(self, usuario, livro):
-        usuario.devolverLivro(livro)
-        self.listaLivros.append(livro)
-        print(f"Livro {livro.titulo} devolvido por {usuario.nome}")
-
-    def verificarLivrosDisponiveis(self):
-        print(f"\n LISTA DE LIVROS DISPONÍVEIS: ")
-        for livro in self.listaLivros:
-            print(livro.titulo)
-
-
-
-biblioteca = Biblioteca("Biblioteca Municipal")
-
+            messagebox.showinfo("Aviso","Livro não disponível para empréstimo!")
     
-livro1 = Livro("Dom Quixote", "Miguel de Cervantes", 1605)
-livro2 = Livro("Cem Anos de Solidão", "Gabriel García Márquez", 1967)
-livro3 = Livro("Orgulho e Preconceito", "Jane Austen", 1813)
-
-biblioteca.adicionarLivro(livro1)
-biblioteca.adicionarLivro(livro2)
-biblioteca.adicionarLivro(livro3)
-
+    def devolver_livro(self, livro, membro):
+        membro.devolver_livro(livro)
+        livro.devolver_livro()
+        messagebox.showinfo("Aviso",f"Livro {livro.titulo} devolvido por {membro.nome}")
     
-usuario1 = Usuario("João", 123)
-usuario2 = Usuario("Maria", 456)
-
-    
-biblioteca.alugarLivro(usuario1, livro1)
-biblioteca.alugarLivro(usuario2, livro2)
-biblioteca.alugarLivro(usuario1, livro3)
-
-   
-usuario1.verificarEmprestimos()
-usuario2.verificarEmprestimos()
-
-    
-biblioteca.devolverLivro(usuario1, livro1)
-biblioteca.devolverLivro(usuario2, livro2)
-
-    
-usuario1.verificarEmprestimos()
-usuario2.verificarEmprestimos()
-
-biblioteca.verificarLivrosDisponiveis()
-
-
-
+    def pesquisar_livro(self, entrada):
+        for livro in self.catalogo:
+            if entrada == livro.titulo or entrada == livro.autor or entrada == livro.id:
+                messagebox.showinfo("Aviso",f"Livro encontrado! \n LIVRO: {livro.titulo} \n AUTOR: {livro.autor} \n ID: {livro.id}")
+                
+    def listar_livros(self):
+        for livro in self.catalogo:
+            messagebox.showinfo(livro.titulo)
+            
